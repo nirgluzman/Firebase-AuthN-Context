@@ -2,8 +2,9 @@ import "./App.css";
 import { useState } from "react";
 
 import { auth } from "./firebase-config";
+import { useUserAuth } from "./context/UserAuthContext";
+
 import {
-  onAuthStateChanged,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
@@ -15,20 +16,16 @@ function App() {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
-  const [user, setUser] = useState({});
-
-  // onAuthStateChanged(auth, (currentUser) => {
-  //   setUser(currentUser);
-  // });
+  const { user } = useUserAuth();
 
   const signup = async () => {
     try {
-      const user = await createUserWithEmailAndPassword(
+      const userCredential = await createUserWithEmailAndPassword(
         auth,
         registerEmail,
         registerPassword
       );
-      console.log("signup user:", user);
+      console.log("signup user:", userCredential.user);
     } catch (err) {
       console.log(err.message);
     }
@@ -36,12 +33,12 @@ function App() {
 
   const login = async () => {
     try {
-      const user = await signInWithEmailAndPassword(
+      const userCredential = await signInWithEmailAndPassword(
         auth,
         loginEmail,
         loginPassword
       );
-      console.log("login user:", user);
+      console.log("login user:", userCredential.user);
     } catch (err) {
       console.log(err.message);
     }
