@@ -1,14 +1,7 @@
 import "./App.css";
 import { useState } from "react";
 
-import { auth } from "./firebase-config";
 import { useUserAuth } from "./context/UserAuthContext";
-
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
 
 function App() {
   const [registerEmail, setRegisterEmail] = useState("");
@@ -16,37 +9,29 @@ function App() {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
-  const { user } = useUserAuth();
+  const { user, logIn, signUp, logOut } = useUserAuth();
 
-  const signup = async () => {
+  const signupHandler = async () => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        registerEmail,
-        registerPassword
-      );
+      const userCredential = await signUp(registerEmail, registerPassword);
       console.log("signup user:", userCredential.user);
     } catch (err) {
       console.log(err.message);
     }
   };
 
-  const login = async () => {
+  const loginHandler = async () => {
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        loginEmail,
-        loginPassword
-      );
+      const userCredential = await logIn(loginEmail, loginPassword);
       console.log("login user:", userCredential.user);
     } catch (err) {
       console.log(err.message);
     }
   };
 
-  const logout = async () => {
+  const logoutHandler = async () => {
     try {
-      await signOut(auth);
+      await logOut();
     } catch (err) {
       console.log(err.message);
     }
@@ -70,7 +55,7 @@ function App() {
             setRegisterPassword(e.target.value);
           }}
         />
-        <button onClick={signup}>Signup</button>
+        <button onClick={signupHandler}>Signup</button>
       </div>
       <div>
         <h3>Login User</h3>
@@ -88,11 +73,11 @@ function App() {
             setLoginPassword(e.target.value);
           }}
         />
-        <button onClick={login}>Login</button>
+        <button onClick={loginHandler}>Login</button>
       </div>
 
       <h3>User Logged In: {user?.email}</h3>
-      <button onClick={logout}>Logout</button>
+      <button onClick={logoutHandler}>Logout</button>
     </div>
   );
 }
