@@ -1,6 +1,8 @@
 import "./App.css";
 import { useState } from "react";
 
+import GoogleButton from "react-google-button";
+
 import { useUserAuth } from "./context/UserAuthContext";
 
 function App() {
@@ -9,7 +11,7 @@ function App() {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
-  const { user, logIn, signUp, logOut } = useUserAuth();
+  const { user, logIn, signUp, logOut, googleSignIn } = useUserAuth();
 
   const signupHandler = async () => {
     try {
@@ -37,9 +39,18 @@ function App() {
     }
   };
 
+  const googleSigninHandler = async () => {
+    try {
+      const userCredential = await googleSignIn();
+      console.log("Google user:", userCredential.user);
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
   return (
-    <div className="App">
-      <div>
+    <>
+      <>
         <h3>Create User</h3>
         <input
           placeholder="Email..."
@@ -56,8 +67,8 @@ function App() {
           }}
         />
         <button onClick={signupHandler}>Signup</button>
-      </div>
-      <div>
+      </>
+      <>
         <h3>Login User</h3>
         <input
           placeholder="Email..."
@@ -74,11 +85,15 @@ function App() {
           }}
         />
         <button onClick={loginHandler}>Login</button>
-      </div>
+      </>
+
+      <>
+        <GoogleButton type="dark" onClick={googleSigninHandler} />
+      </>
 
       <h3>User Logged In: {user?.email}</h3>
       <button onClick={logoutHandler}>Logout</button>
-    </div>
+    </>
   );
 }
 

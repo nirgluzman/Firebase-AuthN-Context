@@ -5,6 +5,8 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged, // monitors authentication status changes and returns the current user.
   signOut,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 
 import { auth } from "../firebase-config";
@@ -24,6 +26,13 @@ export function UserAuthContextProvider({ children }) {
     return signOut(auth);
   }
 
+  function googleSignIn() {
+    const provider = new GoogleAuthProvider();
+    provider.addScope("profile");
+    provider.addScope("email");
+    return signInWithPopup(auth, provider);
+  }
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       console.log("Auth", currentUser);
@@ -36,7 +45,9 @@ export function UserAuthContextProvider({ children }) {
   }, []);
 
   return (
-    <UserAuthContext.Provider value={{ user, logIn, signUp, logOut }}>
+    <UserAuthContext.Provider
+      value={{ user, logIn, signUp, logOut, googleSignIn }}
+    >
       {children}
     </UserAuthContext.Provider>
   );
